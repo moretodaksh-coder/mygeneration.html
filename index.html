@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Generation - Talkative AI</title>
+<style>
+body {
+  margin: 0;
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: white;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+#aiOrb {
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, cyan, #0044ff);
+  border-radius: 50%;
+  box-shadow: 0 0 30px cyan;
+  margin-bottom: 20px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 30px cyan; }
+  50% { transform: scale(1.1); box-shadow: 0 0 60px cyan; }
+  100% { transform: scale(1); box-shadow: 0 0 30px cyan; }
+}
+#inputContainer {
+  display: flex;
+  width: 400px;
+}
+#userInput {
+  flex: 1;
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+#sendBtn {
+  padding: 10px 15px;
+  margin-left: 5px;
+  border-radius: 20px;
+  border: none;
+  background: cyan;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+#messages {
+  width: 400px;
+  max-height: 250px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+.message {
+  margin: 5px 0;
+  padding: 8px 12px;
+  border-radius: 15px;
+  max-width: 80%;
+}
+.user {
+  background: cyan;
+  color: black;
+  align-self: flex-end;
+}
+.ai {
+  background: #2222ff;
+  color: white;
+  align-self: flex-start;
+  box-shadow: 0 0 10px #2222ff;
+}
+</style>
+</head>
+<body>
+
+<div id="aiOrb"></div>
+<div id="messages"></div>
+
+<div id="inputContainer">
+  <input type="text" id="userInput" placeholder="Type here...">
+  <button id="sendBtn">Send</button>
+</div>
+
+<script>
+const messages = document.getElementById('messages');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const aiOrb = document.getElementById('aiOrb');
+
+const aiResponses = [
+  "Hello! I am your talkative AI.",
+  "Welcome to My Generation!",
+  "I can chat with you and even speak!",
+  "Isn't this visual effect cool?",
+  "Type anything and I will respond."
+];
+
+function addMessage(text, sender) {
+  const msg = document.createElement('div');
+  msg.classList.add('message', sender);
+  msg.textContent = text;
+  messages.appendChild(msg);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function aiSpeak(text) {
+  addMessage(text, 'ai');
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  utterance.rate = 1;
+  speechSynthesis.speak(utterance);
+  aiOrb.style.animation = 'pulse 0.5s infinite';
+  utterance.onend = () => {
+    aiOrb.style.animation = 'pulse 2s infinite';
+  }
+}
+
+function aiReply() {
+  const reply = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+  aiSpeak(reply);
+}
+
+sendBtn.addEventListener('click', () => {
+  const text = userInput.value.trim();
+  if (!text) return;
+  addMessage(text, 'user');
+  userInput.value = '';
+  setTimeout(aiReply, 500);
+});
+
+userInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') sendBtn.click();
+});
+</script>
+
+</body>
+</html>
